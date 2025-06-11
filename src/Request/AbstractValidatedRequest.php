@@ -6,6 +6,7 @@ namespace Beauty\Http\Request;
 use Beauty\Http\Request\Exceptions\ValidationException;
 use Beauty\Validation\Validator;
 use Psr\Http\Message\ServerRequestInterface;
+use function PHPUnit\Framework\equalToWithDelta;
 
 /**
  * Base class for validated request
@@ -40,10 +41,6 @@ abstract class AbstractValidatedRequest extends HttpRequest
         $this->withUploadedFiles($base->getUploadedFiles());
         $this->withCookieParams($base->getCookieParams());
 
-        foreach ($base->getAttributes() as $key => $value) {
-            $this->withAttribute($key, $value);
-        }
-
         $this->validateResolved();
     }
 
@@ -74,6 +71,20 @@ abstract class AbstractValidatedRequest extends HttpRequest
     public function fails(): bool
     {
         return empty($this->validatedData);
+    }
+
+    /**
+     * @param ServerRequestInterface $base
+     * @return $this
+     */
+    public function withBaseAttributes(ServerRequestInterface $base): static
+    {
+        $request = $this;
+        foreach ($base->getAttributes() as $key => $value) {
+            $request = $this->withAttribute($key, $value);
+        }
+
+        return $request;
     }
 
     /**
