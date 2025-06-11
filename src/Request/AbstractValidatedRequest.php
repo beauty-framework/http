@@ -40,6 +40,10 @@ abstract class AbstractValidatedRequest extends HttpRequest
         $this->withUploadedFiles($base->getUploadedFiles());
         $this->withCookieParams($base->getCookieParams());
 
+        foreach ($base->getAttributes() as $key => $value) {
+            $this->withAttribute($key, $value);
+        }
+
         $this->validateResolved();
     }
 
